@@ -1,3 +1,4 @@
+
 package com.sangamone.controller;
 
 import java.util.List;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sangamone.entity.Student;
 import com.sangamone.repository.StudentRepository;
 
+import io.swagger.annotations.Api;
+
 @RestController
+@Api(tags = "Student API")
 public class StudentController {
 	
 	@Autowired
@@ -28,74 +32,42 @@ public class StudentController {
 		return "Welcome to Spring boot";
 	}
 	
-	//Handle for creating new record in DB
 	@PostMapping("/saveStudent")
-	public String saveData(@RequestBody Student student) {
-		 Student student1 = studentRepo.save(student);
-		return "student1";
+	public Student saveData(@RequestBody Student student) {
+		Student student1 = studentRepo.save(student);
+		return student1;
 	}
 	
-	//handle for fetch a single record
 	@GetMapping("/getStudent/{rollNo}")
 	public ResponseEntity<Student> getStudentById(@PathVariable int rollNo) {
 		Optional<Student> student = studentRepo.findById(rollNo);
-		if(student.isPresent()) {
-			return new ResponseEntity<Student>(student.get(),HttpStatus.FOUND);
-		}  else {
-			return new ResponseEntity<Student>(student.get(),HttpStatus.NOT_FOUND);
+		if (student.isPresent()) {
+			return new ResponseEntity<>(student.get(), HttpStatus.FOUND);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-
 	}
 	
-	
-	
-	
-	//Handle for fetch all Data from DB
 	@GetMapping("/getAllStudent")
-	public ResponseEntity<List<Student>> getAllStudent(){
+	public ResponseEntity<List<Student>> getAllStudent() {
 		List<Student> studentList = studentRepo.findAll();
-		return new ResponseEntity<List<Student>>(studentList,HttpStatus.OK);
-		
+		return new ResponseEntity<>(studentList, HttpStatus.OK);
 	}
-	
-	//Handle for delete a particular record from DB
 	
 	@DeleteMapping("/DeleteData/{rollNo}")
 	public String deleteData(@PathVariable int rollNo) {
-		Student student = studentRepo.findById(rollNo).get();
-		if(student!=null);
-		   studentRepo.delete(student);
-		return "Deleted Successfully";
-		
+		Student student = studentRepo.findById(rollNo).orElse(null);
+		if (student != null) {
+			studentRepo.delete(student);
+			return "Deleted Successfully";
+		} else {
+			return "Student not found";
+		}
 	}
-	//Handle for updating a particular record
+	
 	@PutMapping("/updateData")
 	public Student updateStudentData(@RequestBody Student student) {
-	            studentRepo.save(student);
+	    studentRepo.save(student);
 		return student;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }
